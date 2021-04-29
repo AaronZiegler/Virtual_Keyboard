@@ -20,13 +20,13 @@ import java.util.HashMap;
 
 public class Keyboard extends JFrame implements KeyListener{
 	
-	JLabel label;
-	private Synthesizer synthesizer;
-	private final MidiChannel[] midiChannels;
-    private final Instrument[] instruments;
+	JLabel label; //create area to receive key inputs
+	private Synthesizer synthesizer; //create synthsiver object to play sounds
+	private final MidiChannel[] midiChannels; //create midiChannels to find sounds to play
+    private final Instrument[] instruments; //
 	private int instrumentIndex = 0;
 	private HashMap<Integer, Integer> mapNotes = new HashMap<Integer, Integer>();
-	
+		
 	public Keyboard(){
         try {
             synthesizer = MidiSystem.getSynthesizer();
@@ -52,6 +52,7 @@ public class Keyboard extends JFrame implements KeyListener{
         mapNotes.put(KeyEvent.VK_O, 73);
         mapNotes.put(KeyEvent.VK_L, 74);
         mapNotes.put(KeyEvent.VK_P, 75);
+		mapNotes.put(KeyEvent.VK_SEMICOLON, 76);
 		
 		
 		this.midiChannels = synthesizer.getChannels();
@@ -90,9 +91,7 @@ public class Keyboard extends JFrame implements KeyListener{
 		   int keyCode = e.getExtendedKeyCode();
 		   int noteNumber = -1;
 
-		   if(mapNotes.containsKey(keyCode)){
-	          noteNumber = mapNotes.get(keyCode);
-   	       }
+
 		   if(mapNotes.containsKey(keyCode)){
 		       noteNumber = mapNotes.get(keyCode);
 		   }else{
@@ -119,65 +118,23 @@ public class Keyboard extends JFrame implements KeyListener{
 		   }
 
 		   if (noteNumber != -1) {
-		       midiChannels[0].noteOn(noteNumber, 600);
+			   	  midiChannels[0].noteOn(noteNumber, 600);
 		   }
        }
 
        @Override
        public void keyReleased(KeyEvent e) {
+		   int keyCode = e.getExtendedKeyCode();
+		   int noteNumber = -1;
 		   
-		   switch(e.getKeyCode()){
-			   case KeyEvent.VK_A :
-			       System.out.println("C Release");
-				   break;
-			   case KeyEvent.VK_W :
-				   System.out.println("C#/Db Release");
-				   break;
-			   case KeyEvent.VK_S :
-				   System.out.println("D Release");
-				   break;
-			   case KeyEvent.VK_E :
-				   System.out.println("D#/Eb Release");
-				   break;
-			   case KeyEvent.VK_D :
-				   System.out.println("E Release");
-				   break;
-			   case KeyEvent.VK_F :
-				   System.out.println("F Release");
-				   break;
-			   case KeyEvent.VK_T :
-				   System.out.println("F#/Gb Release");
-				   break;
-			   case KeyEvent.VK_G :
-				   System.out.println("G Release");
-				   break;
-			   case KeyEvent.VK_Y :
-			       System.out.println("G#/Ab Release");
-				   break;
-			   case KeyEvent.VK_H :
-				   System.out.println("A Release");
-				   break;
-			   case KeyEvent.VK_U :
-				   System.out.println("A#/Bb Release");
-				   break;
-			   case KeyEvent.VK_J :
-				   System.out.println("B Release");
-				   break;
-			   case KeyEvent.VK_K :
-				   System.out.println("C_high Release");
-				   break;
-			   case KeyEvent.VK_O :
-				   System.out.println("C#/Db_high Release");
-				   break;
-			   case KeyEvent.VK_L :
-				   System.out.println("D_high Release");
-				   break;
-			   case KeyEvent.VK_P :
-				   System.out.println("D#/Eb_high Release");
-				   break;
+		   if(mapNotes.containsKey(keyCode)){
+		       noteNumber = mapNotes.get(keyCode);
+			   
 		   }
 		   
-      
+		   if (noteNumber != -1){
+		   	   midiChannels[0].noteOff(noteNumber, 600);
+		   }
        }
 	   
 

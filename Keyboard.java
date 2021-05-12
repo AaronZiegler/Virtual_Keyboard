@@ -23,11 +23,12 @@ public class Keyboard extends JFrame implements KeyListener{
 	JLabel label; //create area to receive key inputs
 	private Synthesizer synthesizer; //create synthsiver object to play sounds
 	private final MidiChannel[] midiChannels; //create midiChannels to find sounds to play
-    private final Instrument[] instruments; //
+    private final Instrument[] instruments;
 	private int instrumentIndex = 0;
-	private HashMap<Integer, Integer> mapNotes = new HashMap<Integer, Integer>();
+	private HashMap<Integer, Integer> mapNotes = new HashMap<Integer, Integer>(); //hashMap to hold the values of thekey's pressed
 		
-	public Keyboard(){
+		
+	public Keyboard(){//creates a synth that will play the sounds
         try {
             synthesizer = MidiSystem.getSynthesizer();
             synthesizer.open();
@@ -36,6 +37,7 @@ public class Keyboard extends JFrame implements KeyListener{
             System.exit(1);
         }   
 		
+		//hashMap for each key on the keyboard and corresponding sound
 	    mapNotes.put(KeyEvent.VK_A, 60);
 	    mapNotes.put(KeyEvent.VK_W, 61);
         mapNotes.put(KeyEvent.VK_S, 62);
@@ -54,10 +56,11 @@ public class Keyboard extends JFrame implements KeyListener{
         mapNotes.put(KeyEvent.VK_P, 75);
 		mapNotes.put(KeyEvent.VK_SEMICOLON, 76);
 		
-		
+		//sets the channel for synth to play from
 		this.midiChannels = synthesizer.getChannels();
         Soundbank bank = synthesizer.getDefaultSoundbank();
 
+		//getting and setting the instrument to play
         synthesizer.loadAllInstruments(bank);
 
 
@@ -70,6 +73,7 @@ public class Keyboard extends JFrame implements KeyListener{
 		
 	}
 	
+	//initialization of the Keyboard class which will create the input window for the Key presses
 	private void init() {   
 		JPanel p = new JPanel();
 	    label = new JLabel("Keyboard");
@@ -91,10 +95,12 @@ public class Keyboard extends JFrame implements KeyListener{
 		   int keyCode = e.getExtendedKeyCode();
 		   int noteNumber = -1;
 
-
+		   //checks to see if key press is to play a note of to switch an instrument
 		   if(mapNotes.containsKey(keyCode)){
+			   //sets note value
 		       noteNumber = mapNotes.get(keyCode);
 		   }else{
+			   //cycles through instruments
 		       switch (keyCode) {
 		           case KeyEvent.VK_LEFT: {
 		               if (instrumentIndex == 0){
@@ -113,12 +119,14 @@ public class Keyboard extends JFrame implements KeyListener{
 		               break;
 		           }
 		       }
+			   //sets instrument value and prints current instument
 		       synthesizer.getChannels()[0].programChange(instrumentIndex);
 		       System.out.println("Switched to " + instruments[instrumentIndex].getName());
 		   }
 
 		   if (noteNumber != -1) {
-			   	  midiChannels[0].noteOn(noteNumber, 600);
+			   //plays current note
+			   midiChannels[0].noteOn(noteNumber, 600);
 		   }
        }
 
@@ -127,6 +135,7 @@ public class Keyboard extends JFrame implements KeyListener{
 		   int keyCode = e.getExtendedKeyCode();
 		   int noteNumber = -1;
 		   
+		   //stops the note from being played
 		   if(mapNotes.containsKey(keyCode)){
 		       noteNumber = mapNotes.get(keyCode);
 			   
@@ -140,6 +149,7 @@ public class Keyboard extends JFrame implements KeyListener{
 
 	
 	public static void main(String[] args){
+		//creates keyboard object and jFrame input area
 		Keyboard keyboard = new Keyboard();
 		keyboard.init();
 	}

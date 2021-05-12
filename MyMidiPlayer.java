@@ -2,6 +2,7 @@
 import javax.sound.midi.*;
 import java.util.*;
 
+
 public class MyMidiPlayer {
 	
 	
@@ -11,7 +12,14 @@ public class MyMidiPlayer {
 		Vector synthInfos;
 		MidiDevice device;
 		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+		Sequencer sequencer;
+		Transmitter trans;
+		Synthesizer synth;
+		Receiver receiver;
+		Scanner scan;
 		
+		
+		//finds and opens all midi devices availible to be recieved
 		for(int i = 0; i < infos.length; i++){
 			System.out.println("INFOS " + infos[i]);
 			try{
@@ -19,9 +27,63 @@ public class MyMidiPlayer {
 				if (!device.isOpen()){
 					try {
 						device.open();
+						
+					    System.out.println("\nDevice: ");
+					    System.out.println("Name: " + device.getDeviceInfo().getName());
+		                System.out.println("Vendor: " + device.getDeviceInfo().getVendor());
+   	                    System.out.println("Version: " + device.getDeviceInfo().getVersion());
+		                System.out.println("Description: " + device.getDeviceInfo().getDescription());
+	                    System.out.println("Transmitters: " + device.getMaxTransmitters());
+	                    System.out.println("Receivers: " + device.getMaxReceivers());
+						
+						
 					}catch(MidiUnavailableException e){
 						System.out.println("No Device Found to Open");
 					}
+				}
+				try{
+//https://docs.oracle.com/javase/tutorial/sound/MIDI-seq-methods.html
+				    // ShortMessage myMsg = new ShortMessage();
+		// 		     // Start playing the note Middle C (60),
+		// 		     // moderately loud (velocity = 93).
+				     // myMsg.setMessage(ShortMessage.NOTE_ON, 0, 61, 93);
+				     // long timeStamp = 1;
+				     // MidiEvent rcvr = new MidiEvent(myMsg, timeStamp);
+		//
+					 sequencer = MidiSystem.getSequencer();
+					 trans = device.getTransmitter();
+		// 			 synth = MidiSystem.getSynthesizer();
+					 receiver = sequencer.getReceiver();
+					 trans.setReceiver(receiver);
+		//
+		//
+					 sequencer.open();
+		// 			 synth.open();
+			 
+					 Sequence sequence = new Sequence(Sequence.PPQ, 20);
+			 
+					 Track track = sequence.createTrack();
+			 
+					 sequencer.setSequence(sequence);
+					 sequencer.setTempoInBPM(100);
+					 sequencer.recordEnable(track, -1);
+					 sequencer.startRecording();
+					 
+					 scan = new Scanner(System.in);
+					 System.out.println("Done?");
+					 String word = scan.next();
+					 if(word.equals("y")){
+						 sequencer.stopRecording();
+						 System.out.println(MidiSystem.getMidiFileTypes(sequence));
+						 System.out.println(MidiSystem.isFileTypeSupported(0, sequence));
+						 sequencer.start();
+					 }
+					 
+					 
+					 
+			 
+				}catch(Exception ex){
+					ex.printStackTrace();
 				}
 			}catch(MidiUnavailableException e){
 				System.out.println("No Device Found");
@@ -29,15 +91,14 @@ public class MyMidiPlayer {
 		}
 		
 		
+		//takes in the midi data that will play the notes in sequence
 		
-
-
-		System.out.println("Enter the number of notes to be played: ");
-		Scanner in = new Scanner(System.in);
-		int numOfNotes = in.nextInt();
-
-		MyMidiPlayer player = new MyMidiPlayer();
-		player.setUpPlayer(numOfNotes);
+		// System.out.println("Enter the number of notes to be played: ");
+// 		Scanner in = new Scanner(System.in);
+// 		int numOfNotes = in.nextInt();
+//
+// 		MyMidiPlayer player = new MyMidiPlayer();
+// 		player.setUpPlayer(numOfNotes);
 	}
 
 	public void setUpPlayer(int numOfNotes)

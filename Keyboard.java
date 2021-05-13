@@ -19,8 +19,7 @@ import javax.sound.midi.*;
 import java.util.HashMap;
 
 public class Keyboard extends JFrame implements KeyListener{
-	
-	JLabel label; //create area to receive key inputs
+
 	private Synthesizer synthesizer; //create synthsiver object to play sounds
 	private final MidiChannel[] midiChannels; //create midiChannels to find sounds to play
     private final Instrument[] instruments;
@@ -75,12 +74,30 @@ public class Keyboard extends JFrame implements KeyListener{
 	
 	//initialization of the Keyboard class which will create the input window for the Key presses
 	private void init() {   
+		
 		JPanel p = new JPanel();
-	    label = new JLabel("Keyboard");
-	    p.add(label);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setSize(400,200);
+		setLocation(100, 100);
+		
+		JLabel label1 = new JLabel();
+		label1.setText("<html><h1>Hello. This is a keybaord. </h1><html>");
+	    label1.setBounds(0, 0, 200, 50);
+		
+	    JLabel label2 = new JLabel();
+	    label2.setText("<html><p><br />A = C3 and <br />the rest of the keys<br />follow the progression<br /> of a normal keyboard.</p></html>");
+	    label2.setBounds(0, 20, 200, 50);
+		
+	    JLabel label3 = new JLabel();
+	    label3.setText("<html><p><br />Have Fun!</p></html>");
+	    label3.setBounds(0, 40, 200, 50);
+
+	    p.add(label1);
+	    p.add(label2);
+	    p.add(label3);
+
 		add(p);
 		addKeyListener(this);
-		setSize(10, 10);
 		setVisible(true);
 		
 	}
